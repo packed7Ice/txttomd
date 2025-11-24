@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Txt to Markdown Converter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Txt to Markdown Converter</h1>
+            <p>テキストファイルを読み込むか、テキストを貼り付けてMarkdownを作成します。</p>
+        </header>
+
+        <div class="main-content">
+            <div class="editor-pane">
+                <section class="input-section">
+                    <div class="file-input-wrapper">
+                        <label for="fileInput" class="button">ファイルを選択</label>
+                        <input type="file" id="fileInput" accept=".txt">
+                        <span id="fileName">選択されていません</span>
+                    </div>
+                    
+                    <textarea id="inputText" placeholder="ここにテキストを貼り付けるか、ファイルを選択してください..."></textarea>
+                    
+                    <button id="splitBtn" class="primary-button">項目を生成する</button>
+                </section>
+
+                <section id="itemsContainer" class="items-container">
+                    <!-- 項目カードがここに生成されます -->
+                </section>
+            </div>
+
+            <div class="preview-pane">
+                <section class="output-section">
+                    <div class="output-controls">
+                        <button id="copyBtn" class="secondary-button">Markdownをコピー</button>
+                        <button id="downloadBtn" class="secondary-button">.mdとしてダウンロード</button>
+                    </div>
+                    <div id="previewArea" class="markdown-preview"></div>
+                </section>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

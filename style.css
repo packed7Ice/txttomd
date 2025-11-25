@@ -2,18 +2,6 @@
   --bg-color: #1e1e1e;
   --card-bg: #1e1e1e; /* Editor background */
   --gutter-bg: #252526;
-  --text-color: #d4d4d4;
-  --primary-color: #007acc;
-  --primary-hover: #0062a3;
-  --secondary-color: #3c3c3c;
-  --secondary-hover: #4b4b4b;
-  --border-color: #454545;
-  --shadow: none; /* Flat design */
-  --radius: 0px; /* Square corners like editor lines */
-  --font-family: Consolas, "Courier New", monospace;
-  --input-bg: #3c3c3c;
-  --input-fg: #cccccc;
-}
 
 * {
   box-sizing: border-box;

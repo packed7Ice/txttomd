@@ -444,12 +444,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 popover.classList.remove('show');
                 popover.style.display = 'none';
             }
-            // Close palette popover if click outside
-            // Assuming palettePopover is defined and appended to body
-            if (typeof palettePopover !== 'undefined' && !textarea.contains(e.target) && !palettePopover.contains(e.target)) {
-                palettePopover.classList.remove('show');
-                palettePopover.style.display = 'none';
-            }
+            // Palette popover is managed by showPalette function when focusing different textareas
+            // No need to auto-close it on outside clicks
         });
 
         
@@ -514,13 +510,26 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.title = dec.label;
             
             btn.addEventListener('mousedown', (e) => {
-                e.preventDefault(); 
+                e.preventDefault();
+                e.stopPropagation(); // Prevent document click from hiding palette
+                
                 const start = textarea.selectionStart;
                 const end = textarea.selectionEnd;
                 const selectedText = textarea.value.substring(start, end);
+                
                 const replacement = dec.insert(selectedText);
+                
                 textarea.focus();
                 document.execCommand('insertText', false, replacement);
+                
+                // Update position as cursor moves
+                updatePalettePosition();
+            });
+
+            // Prevent click event from bubbling to document
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
             });
             
             palettePopover.appendChild(btn);
@@ -554,7 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         textarea.addEventListener('focus', showPalette);
-        textarea.addEventListener('click', updatePalettePosition);
+        textarea.addEventListener('click', showPalette);
         textarea.addEventListener('keyup', updatePalettePosition);
         textarea.addEventListener('input', updatePalettePosition);
 
@@ -596,6 +605,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             saveState();
+            
+            // Clean up palette popover
+            if (palettePopover && palettePopover.parentNode) {
+                palettePopover.parentNode.removeChild(palettePopover);
+            }
+            
             card.remove();
             updateLineNumbers();
             collectMarkdown();

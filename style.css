@@ -2,6 +2,18 @@
   --bg-color: #1e1e1e;
   --card-bg: #1e1e1e; /* Editor background */
   --gutter-bg: #252526;
+  --text-color: #d4d4d4;
+  --primary-color: #007acc;
+  --primary-hover: #0062a3;
+  --secondary-color: #3c3c3c;
+  --secondary-hover: #4b4b4b;
+  --border-color: #454545;
+  --shadow: none; /* Flat design */
+  --radius: 0px; /* Square corners like editor lines */
+  --font-family: Consolas, "Courier New", monospace;
+  --input-bg: #3c3c3c;
+  --input-fg: #cccccc;
+}
 
 * {
   box-sizing: border-box;
@@ -16,6 +28,7 @@ body {
   line-height: 1.5;
   min-height: 100vh;
   overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
+  zoom: 1.4; /* Slightly scale up the entire site */
 }
 
 /* Scrollbar styling */
@@ -408,60 +421,6 @@ textarea:focus {
   color: #d4d4d4;
 }
 
-.type-popover {
-  position: fixed;
-  background-color: #252526;
-  border: 1px solid #454545;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  z-index: 10000;
-  min-width: 150px;
-  display: none;
-  padding: 4px 0;
-}
-
-.type-popover.show {
-  display: block;
-}
-
-.type-option {
-  display: flex;
-  align-items: center;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-size: 12px;
-  color: #cccccc;
-  gap: 8px;
-}
-
-.type-option:hover {
-  background-color: #094771;
-  color: white;
-}
-
-.type-icon {
-  display: flex;
-  align-items: center;
-  width: 16px;
-  justify-content: center;
-}
-
-.template-btn {
-  background-color: transparent;
-  color: #4ec9b0;
-  font-size: 11px;
-  padding: 2px 0;
-  text-align: left;
-  margin-top: 2px;
-  border: none;
-  width: auto;
-  line-height: 1.2;
-  display: none;
-}
-
-.item-card:focus-within .template-btn {
-  display: block;
-}
-
 .template-btn:hover {
   text-decoration: underline;
 }
@@ -640,16 +599,60 @@ textarea:focus {
   color: #4ec9b0;
 }
 
-@media (max-width: 800px) {
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    zoom: 1; /* Reset zoom on mobile to prevent excessive scaling */
+  }
+
   .split-layout {
     flex-direction: column;
   }
-  .editor-column {
+
+  .editor-column,
+  .preview-column {
+    width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
-    height: 50%;
+    padding-bottom: 20px;
   }
-  .preview-column {
-    height: 50%;
+
+  .tabs {
+    height: auto;
+    flex-wrap: wrap;
+    padding: 5px;
+    gap: 5px;
+  }
+
+  .tab-btn {
+    padding: 8px 10px;
+    flex-grow: 1; /* Make buttons easier to tap */
+    justify-content: center;
+  }
+
+  .file-input-wrapper {
+    width: 100%;
+    margin-left: 0 !important;
+    margin-top: 5px;
+    justify-content: center;
+    order: 10; /* Move to new line */
+  }
+
+  .card-gutter {
+    width: 110px; /* Slightly narrower */
+  }
+
+  .card-gutter span {
+    font-size: 9px;
+    width: 20px;
+  }
+
+  /* Adjust button sizes for touch */
+  .visibility-btn,
+  .gutter-type-btn,
+  .add-row-btn,
+  .delete-row-btn {
+    width: 24px;
+    height: 24px;
   }
 }

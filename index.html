@@ -10,39 +10,45 @@
     <div class="container">
         <header>
             <h1>Txt to Markdown Converter</h1>
-            <p>テキストファイルを読み込むか、テキストを貼り付けてMarkdownを作成します。</p>
-        </header>
-
-        <div class="main-content">
-            <div class="editor-pane">
-                <section class="input-section">
-                    <div class="file-input-wrapper">
-                        <label for="fileInput" class="button">ファイルを選択</label>
-                        <input type="file" id="fileInput" accept=".txt">
-                        <span id="fileName">選択されていません</span>
-                    </div>
-                    
-                    <textarea id="inputText" placeholder="ここにテキストを貼り付けるか、ファイルを選択してください..."></textarea>
-                    
-                    <button id="splitBtn" class="primary-button">項目を生成する</button>
-                </section>
-
-                <section id="itemsContainer" class="items-container">
-                    <!-- 項目カードがここに生成されます -->
-                </section>
+        <nav class="tabs">
+            <button id="showInputBtn" class="tab-btn active">入力</button>
+            
+            <div class="file-input-wrapper" style="display: flex; align-items: center; margin-left: 10px;">
+                <label for="fileInput" class="button" style="margin-right: 5px;">ファイルを選択</label>
+                <input type="file" id="fileInput" accept=".txt,.md">
+                <span id="fileName" style="font-size: 12px; color: #888;">ファイルが選択されていません</span>
             </div>
 
-            <div class="preview-pane">
-                <section class="output-section">
-                    <div class="output-controls">
-                        <button id="copyBtn" class="secondary-button">Markdownをコピー</button>
-                        <button id="downloadBtn" class="secondary-button">.mdとしてダウンロード</button>
-                    </div>
-                    <div id="previewArea" class="markdown-preview"></div>
-                </section>
+            <div style="flex: 1;"></div>
+            <button id="undoBtn" class="tab-btn action-btn" title="元に戻す (Ctrl+Z)">
+                <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/></svg>
+            </button>
+            <button id="redoBtn" class="tab-btn action-btn" title="やり直し (Ctrl+Y)">
+                <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966a.25.25 0 0 1 0 .384l-2.36 1.966A.25.25 0 0 1 8 4.466z"/></svg>
+            </button>
+            <button id="copyBtn" class="tab-btn action-btn">コピー</button>
+            <button id="downloadBtn" class="tab-btn action-btn">ダウンロード</button>
+        </nav>
+
+        <main class="main-content">
+            <div id="inputView" class="view-content active">
+                <div class="input-area">
+                    <textarea id="inputText" placeholder="ここにテキストを入力するか、ファイルを読み込んでください..."></textarea>
+                    <button id="splitBtn" class="primary-button">分割して編集開始</button>
+                </div>
             </div>
-        </div>
+
+            <div id="editorView" class="view-content split-layout">
+                <div id="itemsContainer" class="editor-column">
+                    <!-- Items will be generated here -->
+                </div>
+                <div id="previewArea" class="preview-column markdown-preview">
+                    <!-- Preview will be rendered here -->
+                </div>
+            </div>
+        </main>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="script.js"></script>
 </body>

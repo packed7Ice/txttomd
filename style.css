@@ -26,8 +26,8 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   line-height: 1.5;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
 }
 
 /* Scrollbar styling */
@@ -54,21 +54,20 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  /* overflow: hidden; Removed to allow page scroll */
 }
 
 header {
   text-align: left;
   margin-bottom: 0;
-  border-bottom: 1px solid var(--border-color);
   padding: 10px 20px;
   background-color: var(--card-bg);
-  flex-shrink: 0;
+  /* flex-shrink: 0; */
 }
 
 h1 {
-  margin: 0 0 5px;
+  margin: 0;
   font-size: 18px;
   font-weight: normal;
   color: #ffffff;
@@ -83,8 +82,8 @@ p {
 .main-content {
   display: flex;
   flex: 1;
-  overflow: hidden; /* Prevent full page scroll */
-  min-height: 0; /* Crucial for flex nested scrolling */
+  flex-direction: column; /* Ensure it stacks if needed, but split layout handles row */
+  /* overflow: hidden; Removed */
 }
 
 .editor-pane {
@@ -93,7 +92,7 @@ p {
   flex-direction: column;
   border-right: 1px solid var(--border-color);
   min-width: 300px;
-  overflow: hidden; /* Contain children */
+  /* overflow: hidden; Removed */
 }
 
 .preview-pane {
@@ -162,171 +161,288 @@ textarea:focus {
   background-color: var(--primary-hover);
 }
 
-/* Items Section */
-.items-container {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin-bottom: 0;
+/* Tab Bar */
+.tabs {
+  display: flex;
+  align-items: center; /* Vertically center items */
+  background-color: #252526;
+  border-bottom: 1px solid var(--border-color);
+  height: 40px; /* Fixed height for consistency */
+  padding: 0 10px;
+}
+
+.tab-btn {
+  background: transparent;
   border: none;
+  color: #969696;
+  padding: 0 15px;
+  cursor: pointer;
+  font-size: 13px;
+  height: 100%; /* Fill height */
+  display: flex;
+  align-items: center;
+  border-right: 1px solid transparent; /* Remove border lines between tabs if preferred, or keep */
+  border-radius: 0;
+}
+
+.tab-btn:hover {
+  color: #d4d4d4;
+  background-color: #2d2d2d;
+}
+
+.tab-btn.active {
+  color: #ffffff;
+  background-color: #1e1e1e;
+  border-top: 2px solid var(--primary-color);
+}
+
+/* View Content Switching */
+.view-content {
+  display: none;
+  flex: 1;
+  /* overflow: hidden; Removed */
+  flex-direction: column;
+  /* height: 100%; Removed */
+}
+
+.view-content.active {
+  display: flex;
+}
+
+/* Split Layout */
+.split-layout {
+  display: flex;
+  flex-direction: row; /* Side by side */
+  /* overflow-y: auto; Removed */
+  background-color: #1e1e1e;
+  /* padding: 20px; Optional, maybe remove padding for full width */
+  min-width: 0;
+  align-items: flex-start; /* Align top */
+}
+
+.editor-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  /* overflow-y: auto; Removed */
   background-color: var(--bg-color);
-  padding-bottom: 20px;
+  min-width: 0;
+  padding-bottom: 50px; /* Add some space at bottom */
+}
+
+.preview-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* overflow-y: auto; Removed */
+  background-color: #1e1e1e;
+  padding: 20px;
+  min-width: 0;
+}
+
+/* Input Area */
+.input-area {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* height: 100%; Removed to allow scroll */
+  background-color: var(--card-bg);
 }
 
 .item-card {
   background: var(--card-bg);
   display: flex;
-  border-bottom: 1px solid #2d2d2d;
-  transition: background-color 0.2s;
+  border-bottom: none;
+  transition: background-color 0.1s;
   margin-bottom: 0;
+  min-height: 24px;
 }
 
 .item-card.is-inactive {
-  opacity: 0.4;
+  opacity: 0.5;
+  background-color: #252526;
 }
 
-.item-card:hover {
+.item-card:hover,
+.item-card:focus-within {
   background-color: #2a2d2e;
 }
 
 .card-gutter {
-  width: 80px; /* Increased width for button */
+  width: 140px; /* Widen to fit all buttons in one row */
   background-color: var(--gutter-bg);
   border-right: 1px solid var(--border-color);
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Horizontal layout */
   align-items: center;
-  padding-top: 10px;
-  cursor: pointer;
+  justify-content: flex-end; /* Align to right near text */
+  padding: 0 5px;
+  cursor: default;
   user-select: none;
   color: #858585;
-  font-size: 12px;
+  font-size: 10px;
   position: relative;
   flex-shrink: 0;
-  gap: 5px;
-  overflow: visible; /* Allow popover to show */
+  gap: 4px;
+  overflow: visible;
 }
 
-.card-gutter:hover {
-  color: #d4d4d4;
+.card-gutter span {
+  width: 30px; /* Fixed width for line number */
+  text-align: right;
+  margin-right: 5px;
+  margin-bottom: 0;
 }
 
-.breakpoint-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #e51400;
-  position: absolute;
-  left: 5px;
-  top: 50%; /* Center vertically roughly */
-  transform: translateY(-50%);
-  opacity: 0;
-  transition: opacity 0.1s;
-  display: none; /* Hide dot for now as we use gutter for button */
-}
-
-.item-card.is-inactive .breakpoint-dot {
-  opacity: 1;
-}
-
-.card-gutter:hover .breakpoint-dot {
-  opacity: 0.5;
-}
-
-.card-content {
-  flex: 1;
-  padding: 5px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 0;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 5px;
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-.card-header-left {
+/* Visibility Toggle Button */
+.visibility-btn {
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 2px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex: 1;
+  justify-content: center;
+  border-radius: 3px;
+  flex-shrink: 0;
 }
 
-.card-title {
-  font-weight: normal;
-  font-size: 14px;
-  color: #9cdcfe;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.visibility-btn:hover {
+  color: #ccc;
+  background-color: #3c3c3c;
 }
 
-/* Type Select UI - Prominent Button in Gutter */
+/* Type Select UI - Icon Button in Gutter */
 .gutter-type-btn {
   font-size: 10px;
-  padding: 2px 4px;
-  min-width: 60px;
-  width: 90%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-top: 5px;
-  z-index: 10; /* Ensure clickable */
-  position: relative; /* Needed for z-index */
+  padding: 2px;
+  width: 20px;
+  height: 20px;
+  min-width: 0;
+  margin-top: 0;
+  z-index: 10;
+  position: relative;
   cursor: pointer;
   border: 1px solid transparent;
   border-radius: 3px;
   color: #ccc;
-  background-color: #333; /* Default bg */
-  text-align: center;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .gutter-type-btn:hover {
-  border-color: #555;
-  background-color: #444;
+  background-color: #3c3c3c;
 }
 
-/* Ensure color coding applies to gutter btn too */
+/* Add Row Button */
+.add-row-btn {
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 2px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  opacity: 0; /* Default hidden */
+  transition: opacity 0.1s;
+  flex-shrink: 0;
+}
+
+.item-card:hover .add-row-btn,
+.item-card:focus-within .add-row-btn {
+  opacity: 1; /* Show on hover/focus */
+}
+
+.add-row-btn:hover {
+  color: #ccc;
+  background-color: #3c3c3c;
+}
+
+/* Delete Row Button */
+.delete-row-btn {
+  background: transparent;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 2px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  opacity: 0; /* Default hidden */
+  transition: opacity 0.1s;
+  flex-shrink: 0;
+}
+
+.item-card:hover .delete-row-btn,
+.item-card:focus-within .delete-row-btn {
+  opacity: 1;
+}
+
+.delete-row-btn:hover {
+  color: #d65656; /* Reddish */
+  background-color: #3c3c3c;
+}
+
 .gutter-type-btn[data-type="h2"] {
-  background-color: #0e639c;
-  color: white;
+  color: #569cd6;
 }
 .gutter-type-btn[data-type="h3"] {
-  background-color: #0e639c;
-  color: white;
-  opacity: 0.8;
+  color: #569cd6;
 }
 .gutter-type-btn[data-type="list"] {
-  background-color: #714896;
-  color: white;
+  color: #c586c0;
 }
 .gutter-type-btn[data-type="task"] {
-  background-color: #714896;
-  color: white;
-  opacity: 0.8;
+  color: #c586c0;
 }
 .gutter-type-btn[data-type="code"] {
-  background-color: #3a96dd;
-  color: white;
+  color: #ce9178;
 }
 .gutter-type-btn[data-type="quote"] {
-  background-color: #4d4d4d;
-  color: #ccc;
+  color: #6a9955;
 }
 .gutter-type-btn[data-type="plain"] {
+  color: #d4d4d4;
+}
+
+.type-popover {
+  position: fixed;
+  background-color: #252526;
+  border: 1px solid #454545;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  min-width: 150px;
+  display: none;
+  padding: 4px 0;
+}
+
+.type-popover.show {
+  display: block;
+}
+
 .type-option {
   display: flex;
   align-items: center;
-  padding: 6px 12px;
+  padding: 4px 10px;
   cursor: pointer;
   font-size: 12px;
   color: #cccccc;
+  gap: 8px;
 }
 
 .type-option:hover {
@@ -334,50 +450,67 @@ textarea:focus {
   color: white;
 }
 
+.type-icon {
+  display: flex;
+  align-items: center;
+  width: 16px;
+  justify-content: center;
+}
+
 .template-btn {
   background-color: transparent;
   color: #4ec9b0;
-  font-size: 12px;
+  font-size: 11px;
   padding: 2px 0;
   text-align: left;
-  margin-bottom: 0;
+  margin-top: 2px;
   border: none;
   width: auto;
-  display: inline-block;
+  line-height: 1.2;
+  display: none;
+}
+
+.item-card:focus-within .template-btn {
+  display: block;
 }
 
 .template-btn:hover {
   text-decoration: underline;
-  background-color: transparent;
+}
+
+.card-content {
+  flex: 1;
+  padding: 0 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  justify-content: center;
 }
 
 .card-content textarea {
-  background-color: #1e1e1e;
+  width: 100%;
+  max-width: 68ch; /* Approx 64 chars + padding/borders */
   border: none;
-  padding: 4px 8px;
-  font-size: 14px;
-  min-height: 28px;
-  height: 28px;
-  line-height: 20px;
-  border-left: 2px solid #404040;
+  background: transparent;
+  color: #cccccc;
+  font-family: Consolas, Monaco, "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.5;
   resize: none;
+  outline: none;
   overflow: hidden;
+  display: block;
+  padding: 2px 5px;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  word-break: break-all;
 }
 
 .card-content textarea:focus {
-  border-left-color: var(--primary-color);
+  background-color: #2b2b2b;
+  /* min-height: 60px; Removed to prevent auto-expansion on click */
 }
-
-/* Output Section */
-.output-section {
-  background: var(--card-bg);
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  border-left: 1px solid var(--border-color);
-}
-
 .output-controls {
   display: flex;
   gap: 10px;
@@ -397,6 +530,8 @@ textarea:focus {
     Arial, sans-serif;
   line-height: 1.6;
   overflow-y: auto;
+  word-wrap: break-word; /* Ensure preview wraps too */
+  overflow-wrap: break-word;
 }
 
 /* Markdown Preview Styles */
@@ -415,12 +550,10 @@ textarea:focus {
 
 .markdown-preview h1 {
   font-size: 2em;
-  border-bottom: 1px solid #454545;
   padding-bottom: 0.3em;
 }
 .markdown-preview h2 {
   font-size: 1.5em;
-  border-bottom: 1px solid #454545;
   padding-bottom: 0.3em;
 }
 .markdown-preview h3 {
@@ -479,18 +612,56 @@ textarea:focus {
   border: 0;
 }
 
+/* Decoration Palette */
+.decoration-palette {
+  flex-direction: row;
+  flex-wrap: wrap;
+  background-color: #252526;
+  border: 1px solid #454545;
+  border-radius: 3px;
+}
+
+.decoration-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #ccc;
+  cursor: pointer;
+  padding: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-size: 12px;
+  font-family: var(--font-family);
+}
+
+.decoration-btn:hover {
+  background-color: #3c3c3c;
+  border-color: #555;
+}
+
+/* Tab Bar Adjustments */
+.tab-btn.action-btn {
+  color: #4ec9b0;
+}
+
+.tab-btn.action-btn:hover {
+  background-color: #2d2d2d;
+  color: #4ec9b0;
+}
+
 @media (max-width: 800px) {
-  .main-content {
+  .split-layout {
     flex-direction: column;
   }
-  .editor-pane,
-  .preview-pane {
-    flex: 1;
-    width: 100%;
+  .editor-column {
     border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    height: 50%;
   }
-  .preview-pane {
-    border-top: 1px solid var(--border-color);
-    height: 50vh;
+  .preview-column {
+    height: 50%;
   }
 }

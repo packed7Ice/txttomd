@@ -559,13 +559,58 @@ textarea:focus {
   border: 0;
 }
 
+/* Type Popover */
+.type-popover {
+  position: fixed;
+  background-color: #252526;
+  border: 1px solid #454545;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  min-width: 150px;
+  display: none;
+  padding: 4px 0;
+}
+
+.type-popover.show {
+  display: block;
+}
+
+.type-option {
+  display: flex;
+  align-items: center;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #cccccc;
+  gap: 8px;
+}
+
+.type-option:hover {
+  background-color: #094771;
+  color: white;
+}
+
+.type-icon {
+  display: flex;
+  align-items: center;
+  width: 16px;
+  justify-content: center;
+}
+
 /* Decoration Palette */
 .decoration-palette {
+  display: none; /* Hidden by default */
   flex-direction: row;
   flex-wrap: wrap;
   background-color: #252526;
   border: 1px solid #454545;
   border-radius: 3px;
+  position: fixed;
+  z-index: 10000;
+}
+
+.decoration-palette.show {
+  display: flex; /* Show when active */
 }
 
 .decoration-btn {

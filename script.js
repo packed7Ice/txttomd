@@ -370,7 +370,22 @@ document.addEventListener('DOMContentLoaded', () => {
         content.className = 'card-content';
 
         const textarea = document.createElement('textarea');
-        textarea.value = MARKDOWN_TYPES[currentType].template(lineText);
+        
+        // If forcedType is specified, use lineText as-is (already formatted from Undo/Redo)
+        // Otherwise, strip existing markdown syntax and re-apply template to avoid doubling
+        if (forcedType) {
+            textarea.value = lineText;
+        } else {
+            // Strip existing markdown syntax
+            let cleanText = lineText
+                .replace(/^#+\s+/, '') // H2, H3
+                .replace(/^-\s+\[[ x]\]\s+/, '') // Task list
+                .replace(/^-\s+/, '') // List
+                .replace(/^>\s+/, '') // Quote
+                .replace(/^```\n?/, '').replace(/\n?```$/, ''); // Code block
+            
+            textarea.value = MARKDOWN_TYPES[currentType].template(cleanText);
+        }
         
         Object.keys(MARKDOWN_TYPES).forEach(key => {
             const option = document.createElement('div');
@@ -413,25 +428,85 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!isShowing) {
+                // Show popover first to get accurate dimensions
                 popover.classList.add('show');
                 popover.style.display = 'block';
                 popover.style.position = 'fixed';
                 popover.style.zIndex = '10000';
+                popover.style.width = '150px';
                 
-                const btnRect = typeBtn.getBoundingClientRect();
-                const popoverRect = popover.getBoundingClientRect();
+                // Function to update popover position
+                const updatePopoverPosition = () => {
+                    const btnRect = typeBtn.getBoundingClientRect();
+                    const viewportHeight = window.innerHeight;
+                    const viewportWidth = window.innerWidth;
+                    
+                    // Strict visibility check: Hide if ANY part of the button is off-screen vertically
+                    // or if it's completely off-screen horizontally
+                    if (btnRect.top < 0 || btnRect.bottom > viewportHeight ||
+                        btnRect.right < 0 || btnRect.left > viewportWidth) {
+                        popover.classList.remove('show');
+                        popover.style.display = 'none';
+                        return false;
+                    }
+                    
+                    // Reset styles
+                    popover.style.maxHeight = '';
+                    popover.style.overflowY = '';
+                    
+                    const popoverRect = popover.getBoundingClientRect();
+                    
+                    // Position: Right of button, Top aligned (Side menu style)
+                    let top = btnRect.top;
+                    let left = btnRect.right;
+                    
+                    // Horizontal flip if overflow right
+                    if (left + popoverRect.width > viewportWidth) {
+                        left = btnRect.left - popoverRect.width;
+                    }
+                    
+                    // Vertical adjustment if overflow bottom
+                    if (top + popoverRect.height > viewportHeight) {
+                        // Align bottom of popover with bottom of viewport (with margin)
+                        top = viewportHeight - popoverRect.height - 10;
+                        
+                        // If shifting up makes it go off top, align to top with margin
+                        if (top < 10) {
+                            top = 10;
+                            // Set max height if needed
+                            const availableHeight = viewportHeight - 20;
+                            popover.style.maxHeight = availableHeight + 'px';
+                            popover.style.overflowY = 'auto';
+                        }
+                    }
+
+                    popover.style.top = top + 'px';
+                    popover.style.left = left + 'px';
+                    return true;
+                };
                 
-                let top = btnRect.bottom;
-                let left = btnRect.left;
-                
-                // Adjust if popover goes off screen
-                if (top + popoverRect.height > window.innerHeight) {
-                    top = btnRect.top - popoverRect.height;
+                // Initial position
+                if (!updatePopoverPosition()) {
+                    return;
                 }
                 
-                popover.style.top = top + 'px';
-                popover.style.left = left + 'px';
-                popover.style.width = '150px'; // Fixed width for consistency
+                // Update position on scroll
+                const scrollHandler = () => {
+                    // Check if popover is still showing before updating
+                    if (popover.classList.contains('show')) {
+                        if (!updatePopoverPosition()) {
+                            // If update returns false (hidden), remove listener
+                            window.removeEventListener('scroll', scrollHandler, true);
+                        }
+                    } else {
+                        window.removeEventListener('scroll', scrollHandler, true);
+                    }
+                };
+                
+                // Use capture phase to catch all scrolls
+                window.addEventListener('scroll', scrollHandler, true);
+                window.addEventListener('resize', scrollHandler); // Also handle resize
+                
             } else {
                 popover.classList.remove('show');
                 popover.style.display = 'none';
